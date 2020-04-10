@@ -1,37 +1,19 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpEvent, HttpHeaders, HttpRequest, HttpResponse,
-  HttpInterceptor, HttpHandler
-} from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { LoggerService } from '@asx/service/logger.service';
+import { HttpRequest, HttpResponse } from '@angular/common/http';
+import { LoggerService } from '@asx/core/logger/logger.service';
+
+const maxAge = 30000;
 
 @Injectable({
   providedIn: 'root'
 })
-export class CacheService implements HttpInterceptor {
+export class CacheService {
 
-  cache = new Map<string, RequestCacheEntry>();
+  cache = new Map<string, CacheEntry>();
 
   constructor(private logger: LoggerService) { }
 
-  // add intercept method
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-   /* return next.handle(request).pipe(catchError(err => {
-        if (err.status === 401) {
-            // auto logout if 401 response returned from api
-           // this.authenticationService.logout();
-           // location.reload(true);
-        }
-
-        const error = err.error.message || err.statusText;
-        return throwError(error);
-    })) */
-
-    return next.handle(request);
-  }
-
-   get(req: HttpRequest<any>): HttpResponse<any> | undefined {
+    get(req: HttpRequest<any>): HttpResponse<any> | undefined {
     const url = req.urlWithParams;
     const cached = this.cache.get(url);
 
@@ -39,35 +21,30 @@ export class CacheService implements HttpInterceptor {
       return undefined;
     }
 
-    //const isExpired = cached.lastRead < (Date.now() - maxAge);
-    //const expired = isExpired ? 'expired ' : '';
-    const isValid = (cached.sessionId === 1) ? true : false;
-    // logger
+    const isExpired = cached.lastRead < (Date.now() - maxAge);
+    const expired = isExpired ? 'expired ' : '';
+    this.logger.info("cached response :" + cached.response);
+    return cached.response;
   }
 
   put(req: HttpRequest<any>, response: HttpResponse<any>): void {
-    const url = req.urlWithParams;
-    // logger
-                    // sessionId: 1
-    const entry = { url, response, sessionId: 1 };
+    const url = req.url;
+    const entry = { url, response, lastRead: Date.now() };
+    this.logger.info("entry to be cached : " + entry.url);
     this.cache.set(url, entry);
 
-  /* change logic
-    // remove expired cache entries
     const expired = Date.now() - maxAge;
-    this.cache.forEach(entry => {
-      if (entry.lastRead < expired) {
-        this.cache.delete(entry.url);
+    this.cache.forEach(expiredEntry => {
+      if (expiredEntry.lastRead < expired) {
+        this.cache.delete(expiredEntry.url);
       }
     });
-  */
-    // logger
   }
 
 }
 
- export interface RequestCacheEntry {
+export interface CacheEntry {
   url: string;
   response: HttpResponse<any>;
-  sessionId: number;
+  lastRead: number;
 }

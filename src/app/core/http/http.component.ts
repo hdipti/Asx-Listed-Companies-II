@@ -1,21 +1,35 @@
-import { Component, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { HttpService } from './http.service';
-import { LoggerService } from '@asx/service/logger.service';
+import { LoggerService } from '@asx/core/logger/logger.service';
+import { Company } from '@asx/core/company/Company';
 
+@Injectable({
+  providedIn: 'root'
+})
 @Component({
   selector: 'app-http',
   templateUrl: './http.component.html',
   styleUrls: ['./http.component.scss']
 })
-export class HttpComponent implements OnInit {
+export class HttpComponent {
+
+  companyList : Company[] = [];
 
   asxUrl = 'http://www.asx.com.au/asx/research/';
   fileName = 'ASXListedCompanies.csv';
-  httpService: HttpService;
-  constructor(private logger: LoggerService ) {}
+  
+  constructor(private logger : LoggerService,
+              private httpClient: HttpClient,
+              private httpService: HttpService) {  }
 
-  ngOnInit() {
-  	this.httpService.getCSVFromASX(this.asxUrl, this.fileName);
+  getCompanies() {
+    this.logger.log("Fetching companies from ASX");
+    this.httpService.getCSVFromASX(this.asxUrl, this.fileName);
+    /*
+    this.companyList = this.httpService.getCSVFromASX(this.asxUrl, this.fileName);
+    this.logger.log("company list length in http component : " + this.companyList.length);
+    return this.companyList; */
   }
-
 }

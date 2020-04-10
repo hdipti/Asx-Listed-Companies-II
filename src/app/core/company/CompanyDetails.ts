@@ -1,0 +1,30 @@
+export class CompanyDetails {
+	code: string;
+	isin_code: string;
+	desc_full: string;
+	last_price: string;
+	open_price: string;
+	day_high_price: string;
+	day_low_price: string;
+	change_price: string;
+	change_in_percent: string;
+	volume: string;
+	bid_price: string;
+	offer_price: string;
+	previous_close_price: string;
+	previous_day_percentage_change: string;
+	year_high_price: string;
+	last_trade_date: string;
+	year_high_date: string;
+	year_low_price: string;
+	year_low_date: string;
+	pe: string;
+	eps: string;
+	average_daily_volume: string;
+	annual_dividend_yield: string;
+	market_cap: string;
+	number_of_shares: string;
+	deprecated_market_cap: string;
+	deprecated_number_of_shares: string;
+	suspended: string;
+}

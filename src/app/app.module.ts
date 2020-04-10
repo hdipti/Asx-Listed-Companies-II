@@ -8,8 +8,12 @@ import { LanguageTranslationModule } from './shared/modules/language-translation
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthGuard } from './shared';
+import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
+import { HttpModule } from '@asx/core/http/http.module';
 
-import { HttpComponent } from './core/http/http.component';
+import { LoggerService } from '@asx/core/logger/logger.service';
+import { HttpComponent } from '@asx/core/http/http.component';
+import { CompanyComponent } from '@asx/core/company/company.component';
 
 @NgModule({
     imports: [
@@ -18,11 +22,18 @@ import { HttpComponent } from './core/http/http.component';
         BrowserAnimationsModule,
         HttpClientModule,
         LanguageTranslationModule,
-        AppRoutingModule
+        AppRoutingModule,
+        HttpModule,
+        LoggerModule.forRoot({
+            serverLoggingUrl: '/api/logs', 
+            level: NgxLoggerLevel.DEBUG, 
+            serverLogLevel: NgxLoggerLevel.ERROR
+        })
     ],
-    declarations: [AppComponent, HttpComponent],
+    declarations: [AppComponent],
     providers: [
-        AuthGuard
+        AuthGuard,
+        LoggerService
     ],
     bootstrap: [AppComponent]
 })
