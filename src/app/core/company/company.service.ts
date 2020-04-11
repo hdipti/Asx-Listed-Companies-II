@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Company } from '@asx/core/company/Company';
+import { Company } from '@asx/core/company/company.model';
 import { DataProcessorService } from '@asx/core/company/data-processor.service';
 import { LoggerService } from '@asx/core/logger/logger.service';
 import { CacheService } from '@asx/core/http/cache.service';
@@ -10,26 +10,20 @@ import { CacheService } from '@asx/core/http/cache.service';
 })
 export class CompanyService extends DataProcessorService {
 
-  companiesArray : Company[];
+  companiesArray : Company[] = [];
 
   headerValue = "Company";
+
   constructor(private logger: LoggerService) {
     super(logger);
-    this.companiesArray = [];
   }
 
-  processData(data) {
-    this.populateCompanies(data);
-  }
-
-  // temp :  get data from file
-  processDataFromFile(data) : Company[] {
+  processData(data) : Company[] {
     this.populateCompanies(data);
     return this.companiesArray;
   }
 
   populateCompanies(data) {
-    
     let companyCSVArray = (<string>data).split(/\r\n|\n/);
       for (let i = 0; i < companyCSVArray.length-1; i++) {
         if(this.isHeader(companyCSVArray, i)) { 
@@ -38,7 +32,7 @@ export class CompanyService extends DataProcessorService {
           break;
         }
         this.logger.log('i end of for : ' + i);
-    } 
+      } 
   }
 
   isHeader(companyCSVArray : string[], i : number) : boolean {
@@ -61,11 +55,6 @@ export class CompanyService extends DataProcessorService {
     company.asxCode = curruntCompany[1].replace(/['"]+/g, '').trim(); 
     company.industryGroup = curruntCompany[2].replace(/['"]+/g, '').trim();  
 
-    this.companiesArray.push(company);  
-  }
-
-  getList() : Company[] {
-    this.logger.log('number of companies before return : ' + this.companiesArray.length);
-    return this.companiesArray ;
+    this.companiesArray.push(company);
   }
 }

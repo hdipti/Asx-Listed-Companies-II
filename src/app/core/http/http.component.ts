@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpService } from './http.service';
 import { LoggerService } from '@asx/core/logger/logger.service';
-import { Company } from '@asx/core/company/Company';
+import { Company } from '@asx/core/company/company.model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,14 +22,16 @@ export class HttpComponent {
   
   constructor(private logger : LoggerService,
               private httpClient: HttpClient,
-              private httpService: HttpService) {  }
+              private httpService: HttpService) { }
 
-  getCompanies() {
-    this.logger.log("Fetching companies from ASX");
-    this.httpService.getCSVFromASX(this.asxUrl, this.fileName);
-    /*
-    this.companyList = this.httpService.getCSVFromASX(this.asxUrl, this.fileName);
+  fetchCompanies() {
+   this.logger.log("Fetching companies from ASX");
+   this.companyList = this.httpService.getCSVFromASX(this.asxUrl, this.fileName);
+   this.logger.log("companyList size at fetch : " + this.companyList.length);
+  }            
+
+  getCompanies() : Company[] {
     this.logger.log("company list length in http component : " + this.companyList.length);
-    return this.companyList; */
+    return this.companyList;
   }
 }

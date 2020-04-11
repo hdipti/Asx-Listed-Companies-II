@@ -9,5 +9,5 @@ export abstract class DataProcessorService {
   constructor(logger: LoggerService) { }
 
   abstract processData(data); 
-  
+ 
 }

@@ -4,18 +4,13 @@ import { HttpClient, HttpHeaders, HttpParams, HttpRequest } from '@angular/commo
 import { LoggerService } from '@asx/core/logger/logger.service';
 import { CompanyService } from '@asx/core/company/company.service';
 import { CacheService } from '@asx/core/http/cache.service';
-
-//temp
-import { Company } from '@asx/core/company/Company';
+import { Company } from '@asx/core/company/company.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class HttpService {
+export class HttpService {  // TODO - add the fetched companies to cache
 
-  companyService: CompanyService;
-  cache : CacheService;
-  //temp
   companyList : Company[] = [];
   
   corsUrl = 'https://cors-anywhere.herokuapp.com/';
@@ -31,35 +26,21 @@ export class HttpService {
   }; 
 
   constructor(private logger: LoggerService,
-              private httpClient: HttpClient) {
-    this.cache = new CacheService(this.logger);
-    this.companyService = new CompanyService(this.logger);
-  }
+              private httpClient: HttpClient,
+              private cache : CacheService,
+              private companyService : CompanyService) {  }
   
   // Makes call to asx
-  getCSVFromASX(url: string, fileName: any) {
+  getCSVFromASX(url: string, fileName: any) : Company[] {
     this.logger.log("call to asx");
   	this.httpClient
     .get(this.corsUrl + url + fileName, this.httpOptions)
   	  .subscribe(data => { 
-  	  this.companyService.processData(data),
+  	  this.companyList = this.companyService.processData(data),
   	  err =>  this.handleError(err); 
   	});
+     return this.companyList;
   } 
-   
-  // temp : gets file from assets folder when not connected to internet
-  /*
-  getCSVFromASX(url: string, fileName: any) : Company[] {
-    this.logger.log("table from file");
-    this.httpClient.get(this.assetName, {responseType: 'text'})
-      .subscribe(data => {
-      //this.cache.put(url, data); // put(request, response)
-      //this.logger.log("cached response" + this.cache.get(url));
-      this.companyList = this.companyService.processDataFromFile(data),
-      err => this.handleError(err);
-    });
-    return this.companyList;
-  } */
 
   handleError(err: any) {
     // log the error

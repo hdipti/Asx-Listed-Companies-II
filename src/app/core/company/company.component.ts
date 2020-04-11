@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
-import { Company } from './Company';
+import { Company } from './company.model';
 import { CompanyService } from '@asx/core/company/company.service';
 import { LoggerService } from '@asx/core/logger/logger.service';
 
@@ -12,22 +12,13 @@ import { LoggerService } from '@asx/core/logger/logger.service';
   templateUrl: './company.component.html',
   styleUrls: ['./company.component.scss']
 })
-export class CompanyComponent implements OnInit {
+export class CompanyComponent {
 
- logger: LoggerService;
- companyService : CompanyService;
- companiesArray : Company[] = [];
-
-  constructor(private companyLogger: LoggerService) {
-    this.logger = companyLogger;
-    this.companyService = new CompanyService(this.logger);
-  }
-
-  ngOnInit(){}
+  constructor(private logger: LoggerService,
+              private companyService : CompanyService) {}
 
   getCompanyList() {
-    this.logger.log("Company Compoment gets the companies : " + this.companiesArray.length);
-	  return this.companyService.getList(); //Invokes the call from asx 
-    return this.companiesArray;
+    this.logger.log("Company Compoment gets the companies : " + this.companyService.companiesArray.length);
+	  return this.companyService.companiesArray; //Invokes the call from asx 
   }
 }
